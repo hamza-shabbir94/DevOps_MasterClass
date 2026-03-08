@@ -36,7 +36,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh 'chmod +x ./Jenkins/Jenkins_Upgradev3/jenkins-plugin-model/ci/01-build.sh && ./jJenkins/Jenkins_Upgradev3/jenkins-plugin-model/ci/01-build.sh'
+                sh 'chmod +x ./Jenkins/Jenkins_Upgradev3/jenkins-plugin-model/ci/01-build.sh && ./Jenkins/Jenkins_Upgradev3/jenkins-plugin-model/ci/01-build.sh'
             }
         }
 
