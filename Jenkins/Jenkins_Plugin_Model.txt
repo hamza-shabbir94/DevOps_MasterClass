@@ -1,0 +1,7 @@
+git -> fetch
+Microsoft.net > Build
+test > uunit
+publish > docker
+
+
+# standard Jenkins Build with Manual Plugin 

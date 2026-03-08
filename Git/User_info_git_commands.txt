@@ -1,0 +1,118 @@
+git help
+git help pull
+
+# to update just rerun the command 
+git config --global user.name "Hamza Shabbir"
+git config --global user.email "hamza.shabbir.94.4@gamil.com
+
+git config --list
+
+
+# create git Repo
+git init
+git status
+git add <file/dir>
+git diff
+git commit -m "first commit" 
+git log # it show last 10 commit
+
+# identifies the commit from different user
+git log --author="Name/Email"
+
+
+# Github (Remote Repo)
+
+git clone link
+git clone -b main [link]    # -b branch
+git commit -am "commit Message 2"   # it will not commit the newly created file, only commit the track file
+git pull 
+git push
+
+# authentication in local & Github
+# github 
+github Account > setting > ssh and gpg key > create ssh key > ssh-keygen -t ed2219 -C "same email of github" > copy .pub key and paste it in github. 
+ssh -T git@github.com
+
+# Branch
+git branch # list
+git branch -a
+git branch develop
+git switch develop
+git checkout <branch_name>
+git branch -m <old_name> <new_Name> # rename
+git branch -d <branch_name> # delete the branch
+git log --oneline --graph
+
+git merge <branch_main> -m "message" # now git find conflict, # it can be because we want to merge one to another however one file both of them and both have different but where you want to merge there that file is not committed 
+open the file
+git status
+git add.
+git commit
+git log --oneline --graph
+
+
+
+# if you push new branch fro local and you get up-stream, its means there no branch in github
+git push --set-upstream origin Branch_name
+
+# merge 
+go the pull requests > new pull request > create pull request from which branch to which branch >
+git swithc main
+git pull
+git merge develop
+gi staus
+git commit -am "commit"
+git push
+
+
+# revert the commit
+git reset # doing the roll back your local environment to pervious commit, It help only when you want reveryt in local machine
+
+git revert # it also do roll back, but behaviour is diff, it put revert as a new commit. As reset delete the current status total
+
+git log --oneline
+touch file1.txt
+git commit -am "Commit reset 1"
+vi file1.txt
+git commit -am "Commit reset 2"
+git log --oneline
+git reset --soft commit_id  # --soft will only change the commit history
+git reset --hard commit_id  # delete file or content
+
+git log --oneline
+vi file1.txt
+git commit -am "Commit reset 1"
+vi file2.txt
+git commit -am "Commit reset 2"
+git log --oneline
+git push
+git revert HEAD 
+
+# Compare changes
+
+git status # if there any change
+git diff
+# compare git commit
+git diff Commit_id Commid_id_which_you_want_compare
+
+# git stash  # stash/save you code temporary when you want to work on other thing
+git stash
+git stash list
+git stash apply
+git commit -am "git stash"
+git push
+# Note: Whenever adding anything in a stash, and after completing the work in stash you need to delete the stash as well
+git stash drop
+git stash list
+
+# stash an untrack file
+# committed file are tracked file
+# uncommitted files are untracked file
+# need to stash all the files which are tracked or untracked
+git stash -a
+git stash # this will only stash the tracked file 
+git stash pop # if don't want to apply #  git stash apply do remove stash from the stash list
+
+git stash save "message"
+git stash show stash@{index}        # it doesn't show untracked file
+git stash apply/pop stash@{index}
