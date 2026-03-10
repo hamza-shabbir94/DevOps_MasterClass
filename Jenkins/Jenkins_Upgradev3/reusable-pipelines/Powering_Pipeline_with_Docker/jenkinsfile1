@@ -25,7 +25,7 @@ pipeline {
 
       stage('Unit Test') {
         steps {
-          dir('./java-tomcat-sample') {
+          dir('./Jenkins/Jenkins_Upgradev3/java-tomcat-sample') {
             sh '''
               echo "Executing Unit Tests..."
               mvn test
@@ -38,7 +38,7 @@ pipeline {
         steps {
           echo "Building version: ${VERSION} with suffix: ${RELEASE_VERSION}"
           echo 'Mention your Application Build Code here!!!'
-          sh 'mvn -f java-tomcat-sample/pom.xml clean package'
+          sh 'mvn -f Jenkins/Jenkins_Upgradev3/java-tomcat-sample/pom.xml clean package'
         }
       }
     }
