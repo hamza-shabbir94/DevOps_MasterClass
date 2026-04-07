@@ -1,0 +1,21 @@
+FROM ubuntu:jammy
+
+LABEL key="value"
+
+
+RUN command
+
+# there can be only CMD, it should run application, Almost it's the last process the DockerFile
+CMD [ "executable", "param1" ]
+
+# port
+EXPOSE 80 
+
+# env path 
+ENV key=value
+
+ADD source dest
+
+VOLUME [ "/data" ]
+
+WORKDIR /the/workdir/path

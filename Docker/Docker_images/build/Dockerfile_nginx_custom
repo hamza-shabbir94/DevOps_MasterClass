@@ -1,0 +1,20 @@
+FROM nginx:latest
+
+LABEL version="0.1"
+LABEL maintainer="Hamza Shabbir"
+
+WORKDIR /usr/share/nginx/html
+
+COPY index.html index.html
+
+
+#mkdir -p custom_nginx_image
+#cd custom_nginx_image/
+#vi Dockerfile
+#vi index.html <<EOD
+#<h1> Hello, This is my first nginx custom image </h1>
+#EOD
+#docker build -t hamza94/nginx_extend:0.1
+#docker images
+#docker run -d -it --name nginx_extend  -p 8081:80 hamza94/nginx_extend:0.1
+# browse the ip:8081

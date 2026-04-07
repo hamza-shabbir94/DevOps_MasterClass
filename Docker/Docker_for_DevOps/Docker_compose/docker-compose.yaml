@@ -1,0 +1,17 @@
+# same concept as kubernetes deployment
+version: 
+
+services:
+  web: # name of the service
+    image: nginx
+    environment:
+      - name=value
+    ports:
+      - "80:80"
+
+volumes:
+  data-volume: # volume name
+
+networks:
+  custom-network:
+ 
