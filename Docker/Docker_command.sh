@@ -97,3 +97,21 @@ docker compose build
 docker compose up
 docker compose down
 docker compose push # push all the images
+
+
+# docker custom compose file
+docker compose -f Custom-Application up -d
+
+docker compose ls
+dokcer compose logs
+# log for specific services
+docker compose logs[serivce..]
+
+# 
+docker compose logs --tail=10
+
+docker compose logs --follow
+docker compose logs --follow --tail=5
+
+# go into shell
+docker compose exec <service_name> /bin/bash
