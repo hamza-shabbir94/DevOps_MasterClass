@@ -115,3 +115,21 @@ docker compose logs --follow --tail=5
 
 # go into shell
 docker compose exec <service_name> /bin/bash
+
+
+# docker stack
+docker stack deploy -c docker-compose.yml web_app
+
+
+# Docker Swarm Sercets
+docker secret --help
+docker secret create <secret_name> <file_name>
+
+# by CLi
+echo "db_user" | docker secret create db_username -
+
+docker secret inspect <secret_name>
+docker service create --name svc_name --secret username_secret --secret pass_secret -e POSTGRES_PASSWORD_FILE=/run/secrets/pass_secret -e POSTGRES_USER_FILE=/run/secrets/user_secret image:tag
+
+# 
+docker stack deploy -c docker-compose.yaml postgresdb
