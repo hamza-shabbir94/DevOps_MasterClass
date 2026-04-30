@@ -1,0 +1,188 @@
+Installing Kubernetes and Worker Node Setup on Ubuntu 24.04
+#
+ubuntu
+#
+kubernetes
+#
+devops
+#
+tutorial
+Kubernetes Setup on Ubuntu 24.04 (Kubernetes v1.33)
+1. Prepare the Ubuntu VM
+Update system packages:
+
+sudo apt update && sudo apt upgrade -y
+Disable swap (required by Kubernetes):
+
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+sudo sed -i '/swap.img/ s/^/#/' /etc/fstab
+2. Enable Kernel Modules and Sysctl Settings
+Load required kernel modules:
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+Ensure they load on boot:
+
+cat <<EOF | sudo tee /etc/modules-load.d/kubernetes.conf
+overlay
+br_netfilter
+EOF
+Set required sysctl parameters:
+
+sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+Apply sysctl changes:
+
+sudo sysctl --system
+3. Install and Configure Containerd (Container Runtime)
+Kubernetes v1.33 requires CRI v1. Docker (dockershim) is not supported.
+
+Install containerd:
+
+sudo apt install -y containerd
+Generate the default containerd configuration:
+
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
+Enable systemd cgroup:
+
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+Restart and enable containerd:
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now containerd
+Note: The CRI plugin is enabled by default in a standard containerd package config. You generally do not need to manually add a CRI block. If you choose to verify, ensure the CRI plugin section is present and not disabled. The pause image you referenced is reasonable.
+Ensure the CRI plugin is enabled:
+
+[plugins."io.containerd.grpc.v1.cri"]
+  sandbox_image = "registry.k8s.io/pause:3.10"
+Restart and enable containerd:
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+4. Add the Kubernetes APT Repository (v1.33)
+sudo apt install -y apt-transport-https ca-certificates curl gpg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | \
+sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
+https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /" | \
+sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+5. Install Kubernetes Tools
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+(Optional but common) Ensure kubelet is enabled:
+
+sudo systemctl enable --now kubelet
+6. Install Helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+Verify Helm and add repositories:
+
+helm version
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+7. Initialize the Kubernetes Control Plane
+sudo kubeadm init --pod-network-cidr=10.0.0.0/16
+8. Set Up kubeconfig
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+9. Verify Node Status
+kubectl get nodes
+The node will show NotReady until a CNI plugin is installed.
+Output: is-kube shows as NotReady (because Pod Network is not yet installed)
+Install Cilium CNI
+Install cilium-cli
+Download the Cilium CLI:
+
+curl -L --remote-name https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
+sudo tar xzvf cilium-linux-amd64.tar.gz -C /usr/local/bin
+rm cilium-linux-amd64.tar.gz
+Install Cilium
+Install Cilium into the cluster:
+
+cilium install
+Verify Cluster Status
+kubectl get nodes
+cilium status
+Worker Node Setup
+1. Prepare the Ubuntu VM
+Update system packages:
+
+sudo apt update && sudo apt upgrade -y
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+2. Setup kernel modules and sysctl
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+cat <<EOF | sudo tee /etc/modules-load.d/kubernetes.conf
+overlay
+br_netfilter
+EOF
+
+cat <<EOF | sudo tee /etc/sysctl.d/kubernetes.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
+3. Install and configure containerd
+sudo apt install -y containerd
+
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
+
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now containerd
+4. Add Kubernetes apt repo (v1.33) and install kubelet/kubeadm
+sudo apt install -y apt-transport-https ca-certificates curl gpg
+sudo mkdir -p /etc/apt/keyrings
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | \
+sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
+https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /" | \
+sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl enable --now kubelet
+Join the worker to the cluster
+1. Create Kubernetes Cluster's Token
+Run this on the control-plane node:
+
+kubeadm token create --print-join-command
+It prints something like:
+sudo kubeadm join <CONTROL_PLANE_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
+
+2. Run that join command on the worker
+Paste and run it on the worker node (with sudo).
+
+sudo kubeadm join <CONTROL_PLANE_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
+3. Verify from the Control Plane
+
+# it after running this on the worker you get error "E0415 10:50:46.759721   19680 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+kubectl get nodes -o wide
+
+# then use this step 
+# 1. Create the configuration directory
+mkdir -p $HOME/.kube
+
+# 2. Securely copy the admin config from your Master node to this Worker node
+# (Replace 'master-ip' with the actual IP of your master node)
+scp root@<master-ip>:/etc/kubernetes/admin.conf $HOME/.kube/config
+
+# 3. Set the correct permissions so your user can read it
+sudo chown $(id -u):$(id -g) $HOME/.kube/config

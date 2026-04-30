@@ -1,0 +1,11 @@
+
+# Master Node Components
+1) Etcd (key-value store) database for k8s cluster, Provide high avalibility, Alway keep the backup for it (If master goes then we can restore with it)
+2) Kube-api-server # API server is the entry point for all the REST commands used to control the cluster.
+3) kube-controller # Manage bunch of job, Example automated task
+4) kube-scheduler # Used to regulates task on work node
+
+# Worker Node Components
+1) kube-proxy
+2) pods
+3) kubelet

@@ -1,0 +1,12 @@
+
+# Master Node Components
+1) Etcd (key-value store) database for k8s cluster, Provide high avalibility, Alway keep the backup for it (If master goes then we can restore with it)
+2) Kube-api-server # API server is the entry point for all the REST commands used to control the cluster.
+3) kube-controller # Manage bunch of job, Example automated task
+4) kube-scheduler # Used to regulates task on work node
+
+# Worker Node Components # Worker nodes contain all the necessary services to manage the networking between the containers, communicate with the master node, and assign resources to the scheduled containers.
+1) kube-proxy # Kube-proxy runs on each node to deal with individual host sub-netting and ensure that the services are available to external parties and Kube-proxy acts as a network proxy and a load balancer for a service on a single worker node
+2) pods
+3) kubelet (K8s Agent executed on the worker nodes.) Kubelet gets the configuration of a Pod from the API server and ensures that the described containers are up and running.
+
