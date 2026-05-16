@@ -1,0 +1,8 @@
+
+# Terraform AWS IAM USER
+
+User: Terraform-admin
+Pass: 1Passworda
+
+# IAM GROUP
+terraform-admin

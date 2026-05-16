@@ -1,0 +1,33 @@
+variable "AWS_ACCESS_KEY" {
+
+}
+
+variable "AWS_SECRET_KEY" {
+
+}
+
+variable "AWS_REGION" {  
+    default = "us-east-2"
+}
+
+
+variable "AMIS" {
+    type = map
+    default = {
+        us-east-2 = "ami-0fe18bc3cfa53a248"
+        us-west-2 = "ami-0352d5a37fb4f603f"
+        us-west-1 = "ami-0f40c8f97004632f9"
+    }
+  
+}
+
+variable "PATH_TO_PRIVATE_KEY" {
+  default = "/Users/hamza/Hamza/all_work/DevOps_MasterClass/Terraform/Terraform_AWS/VPC_NAT_EC2/levelup_key"
+}
+
+variable "PATH_TO_PUBLIC_KEY" {
+  default = "/Users/hamza/Hamza/all_work/DevOps_MasterClass/Terraform/Terraform_AWS/VPC_NAT_EC2/levelup_key.pub"
+}
+variable "INSTANCE_USERNAME" {
+  default = "ubuntu"
+}
